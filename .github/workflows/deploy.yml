@@ -27,28 +27,18 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      # ✅ pnpm은 액션으로 설치 (npm -g 대신)
+      # ✅ pnpm 설치
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
-      # (선택이지만 과거 403 이슈 있었으니 넣어둠)
-      - name: Force npmjs registry for pnpm
-        run: |
-          pnpm config set registry https://registry.npmjs.org/
-          pnpm config set verify-store-integrity false
-          pnpm -v
-          node -v
-
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      # ⚠️ astro.config.mjs 에 site: "https://0uyl.github.io" 꼭 설정
       - name: Build
         run: pnpm build
 
-      # Jekyll 오작동 방지용 (여분). 아티팩트에 .nojekyll 추가
       - name: Add .nojekyll
         run: touch dist/.nojekyll
 
