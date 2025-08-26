@@ -153,7 +153,7 @@ const bannerOffset =
     			try { localStorage.removeItem('hue'); } catch {}
   			} else {
     			const stored = localStorage.getItem('hue');
-    			if (stored !== null) hueValue = stored;
+    			if (stored !== null) hueValue = storedHue;
     			else {
       				// 처음 방문자 편의: 기본값 저장
       				try { localStorage.setItem('hue', hueValue); } catch {}
