@@ -5,22 +5,47 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# GitHub Pages 배포에 필요한 권한
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# 동시에 여러 배포가 꼬이지 않도록
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
       - name: Install pnpm
         run: npm install -g pnpm
-      - name: Install dependencies
+
+      # 👉 과거에 pnpm 403 에러가 났던 로그가 있어서 레지스트리 확실히 지정
+      - name: Force npmjs registry for pnpm
+        run: |
+          pnpm config set registry https://registry.npmjs.org/
+          pnpm config set verify-store-integrity false
+
+      - name: Install deps
         run: pnpm install --frozen-lockfile
+
+      # ⚠️ astro.config.mjs 에 site: "https://0uyl.github.io" 로 설정했는지 확인!
       - name: Build
         run: pnpm build
+
+      # dist(정적 결과물)를 Pages 아티팩트로 업로드
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
