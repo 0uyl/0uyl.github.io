@@ -5,13 +5,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# GitHub Pages 배포에 필요한 권한
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 동시에 여러 배포가 꼬이지 않도록
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -29,23 +27,31 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      # ✅ pnpm은 액션으로 설치 (npm -g 대신)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-      # 👉 과거에 pnpm 403 에러가 났던 로그가 있어서 레지스트리 확실히 지정
+      # (선택이지만 과거 403 이슈 있었으니 넣어둠)
       - name: Force npmjs registry for pnpm
         run: |
           pnpm config set registry https://registry.npmjs.org/
           pnpm config set verify-store-integrity false
+          pnpm -v
+          node -v
 
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      # ⚠️ astro.config.mjs 에 site: "https://0uyl.github.io" 로 설정했는지 확인!
+      # ⚠️ astro.config.mjs 에 site: "https://0uyl.github.io" 꼭 설정
       - name: Build
         run: pnpm build
 
-      # dist(정적 결과물)를 Pages 아티팩트로 업로드
+      # Jekyll 오작동 방지용 (여분). 아티팩트에 .nojekyll 추가
+      - name: Add .nojekyll
+        run: touch dist/.nojekyll
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
