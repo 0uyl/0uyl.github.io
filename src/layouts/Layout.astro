@@ -131,32 +131,40 @@ const bannerOffset =
 		))}
 
 		<!-- Set the theme before the page is rendered to avoid a flash -->
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue}}>
-			// Load the theme from local storage
-			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
-			switch (theme) {
-				case LIGHT_MODE:
-					document.documentElement.classList.remove('dark');
-					break
-				case DARK_MODE:
-					document.documentElement.classList.add('dark');
-					break
-				case AUTO_MODE:
-					if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-						document.documentElement.classList.add('dark');
-					} else {
-						document.documentElement.classList.remove('dark');
-					}
-			}
+		<script
+  			is:inline
+  			define:vars={{
+    			DEFAULT_THEME,
+    			LIGHT_MODE,
+    			DARK_MODE,
+    			AUTO_MODE,
+    			BANNER_HEIGHT_EXTEND,
+    			PAGE_WIDTH,
+    			configHue,
+    			fixedHue: siteConfig.themeColor.fixed, // ✅ fixed 여부 전달
+  			}}
+		>
+  			// ── 테마(생략) …
 
-			// Load the hue from local storage
-			const hue = localStorage.getItem('hue') || configHue;
-			document.documentElement.style.setProperty('--hue', hue);
+ 			// ── Hue 적용 로직 (fixed=true면 config만 사용)
+  			let hueValue = String(configHue);
+  			if (fixedHue) {
+    			// 고정 모드: 로컬 값 무시 & 청소
+    			try { localStorage.removeItem('hue'); } catch {}
+  			} else {
+    			const stored = localStorage.getItem('hue');
+    			if (stored !== null) hueValue = stored;
+    			else {
+      				// 처음 방문자 편의: 기본값 저장
+      				try { localStorage.setItem('hue', hueValue); } catch {}
+    			}
+  			}
+  			document.documentElement.style.setProperty('--hue', hueValue);
 
-			// calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
-			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
-			offset = offset - offset % 4;
-			document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+  		// ── 배너 보정(기존 그대로)
+  			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+  			offset = offset - offset % 4;
+  			document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
 		</script>
 		<style define:vars={{
 			configHue,
