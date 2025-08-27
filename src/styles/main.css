@@ -151,15 +151,3 @@
   }
 }
 
-#main-grid #swup-container {
-  max-width: clamp(640px, 55vw, 780px); /* 원하는 값으로 조절 */
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  justify-self: center;   /* grid 안에서 가운데 배치 */
-}
-
-/* (옵션) 본문 내부 요소가 컨테이너보다 더 넓어지지 않게 */
-#swup-container #content-wrapper > * {
-  max-width: 100%;
-}
