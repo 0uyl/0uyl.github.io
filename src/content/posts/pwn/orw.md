@@ -22,7 +22,7 @@ shellcraft 함수를 사용해서 풀어보겠다.
 
 ![alt text](image-3.png)
 
-x86이다. 
+x86이다.
 
 ![alt text](image-4.png)
 
