@@ -13,6 +13,24 @@ draft: false
 syscall만 허용이 된다.
 
 ![
+](image-5.png)
+
+거기다가 이 코드를 보면 unk_808640에서
+복사해서 들어가는데 v3에는 BPF가 들어간다.
+(바이트코드 필터) 
+
+![
+](image-6.png)
+unk_808640 hex table이다.
+i386 syscall table 기준으로 보면
+
+![alt text](image-7.png)
+1 = exit, 3 = read, 4 = write, 5 open이다.
+그리고 기타 시그널 복귀 등이 있다. 
+이것을 제외하고 모든 시스템 콜을 차단한다.
+orw shellcode 작성문제이다.
+
+![
 ](image-1.png)
 
 드림핵에서 풀었던 기초적인
