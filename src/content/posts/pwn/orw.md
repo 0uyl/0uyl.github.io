@@ -3,7 +3,7 @@ title: pwnable.tw orw풀이
 published: 2022-07-01
 tags: [shellcode]
 category: pwn
-draft: true
+draft: false
 ---
 
 # orw
